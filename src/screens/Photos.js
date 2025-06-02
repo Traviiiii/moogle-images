@@ -2,15 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { ActivityIndicator, FlatList, Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { global } from '../config/global';
 import SearchForm from '../components/SearchForm';
+import { useFonts, Quicksand_400Regular, Quicksand_500Medium, Quicksand_700Bold } from '@expo-google-fonts/quicksand'
 
-export default function PhotosScreen({ navigation }) {  
-    const [searchQuery, setSearchQuery] = useState('Beach');
+export default function PhotosScreen({ navigation }) { 
+    const [fontsLoaded] = useFonts({
+        Quicksand_400Regular,
+        Quicksand_500Medium,
+        Quicksand_700Bold,
+    })
+
+    // Uses default search of 'avocado' if nothing is provided
+    const [searchQuery, setSearchQuery] = useState('Avocado');
     const [photos, setPhotos] = useState(null);
 
+    // Searches for Photos with given query
     const searchPhotos = () => {
         console.log("Searching for:", searchQuery);
         
-        fetch(`https://api.unsplash.com/search/photos?client_id=${global.unsplashAccessKey}&query=${searchQuery}`)
+        fetch(`https://api.unsplash.com/search/photos?client_id=${global.unsplashAccessKey}&query=${searchQuery}&per_page=30`)
             .then((response) => response.json())
             .then((json) => {
                 setPhotos(json.results);
@@ -24,9 +33,16 @@ export default function PhotosScreen({ navigation }) {
         searchPhotos();
     }, [searchQuery]);
 
+    if (!fontsLoaded) {
+        return null;
+    }
+
+    // Returns page
     return (
         <View style={styles.PhotosScreen}>
-            <SearchForm setSearchQuery={setSearchQuery} type="photos"/>
+            <View style={styles.SearchFormWrapper}>
+                <SearchForm setSearchQuery={setSearchQuery} type="photos"/>
+            </View>
 
             {photos ? (
                 <FlatList
@@ -47,7 +63,7 @@ export default function PhotosScreen({ navigation }) {
                         </TouchableOpacity>
                     )}
                     numColumns="2"
-                    style={{margin: 10, marginBottom: 100}}                
+                    style={{margin: 10, marginBottom: 0}}                
                 />
             ) : (
                 <View style={styles.loadingContainer}>
@@ -59,18 +75,38 @@ export default function PhotosScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    PhotosScreen: {},
+    PhotosScreen: {
+        backgroundColor: '#E6EBE0',
+        flex: 1,
+    },
+    SearchFormWrapper: {
+        backgroundColor: '#000',
+        paddingHorizontal: 10,
+        paddingBottom: 10,
+        borderBottomColor: '#F79824',
+        borderWidth: 2,
+        fontFamily: 'Quicksand_400Regular',
+    },
     loadingContainer: {
-        height: '100%',
+        flex: 1,
         justifyContent: 'center'
     },
     resultImage: {
         flex: 1,
-        height: 200
+        height: 200,
+        borderWidth: 2,
+        borderColor: '#F79824',
+        borderRadius: 20,
     },
     resultImageTouchable: {
         flex: 1,
-        margin: 10,
-        height: 200
-    }    
+        margin: 5,
+        height: 200,
+    },
+    photoContainer: {
+        flex: 1,
+    },
+    pageWrapper: {
+        flex: 1,
+    },
 });

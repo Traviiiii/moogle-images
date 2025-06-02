@@ -2,13 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ActivityIndicator, FlatList, Image, TouchableOpacity } from 'react-native';
 import { global } from '../config/global';
 import SearchForm from '../components/SearchForm';
+import { useFonts, Quicksand_400Regular, Quicksand_500Medium, Quicksand_700Bold } from '@expo-google-fonts/quicksand'
 
 export default function CollectionsScreen({ navigation }) {
-    const [searchQuery, setSearchQuery] = useState('Cars');
+    const [fontsLoaded] = useFonts({
+        Quicksand_400Regular,
+        Quicksand_500Medium,
+        Quicksand_700Bold,
+    })
+    // Loads default query of 'nature' if nothing has been set
+    const [searchQuery, setSearchQuery] = useState('Nature');
     const [collections, setCollections] = useState();
 
+    // Searches API for collections with query
     const searchCollections = () => {
-        fetch('https://api.unsplash.com/search/collections?client_id='+global.unsplashAccessKey+'&query='+searchQuery)
+        fetch(`https://api.unsplash.com/search/collections?client_id=${global.unsplashAccessKey}&query=${searchQuery}&per_page=30`)
         .then((response) => response.json())
         .then((json) => {setCollections(json["results"]);
         })
@@ -20,11 +28,17 @@ export default function CollectionsScreen({ navigation }) {
     useEffect(() => {
         searchCollections();
     }, [searchQuery]);
-    
 
-return (
+    if (!fontsLoaded) {
+        return null;
+    }
+
+    // Returns page 
+    return (
         <View style={styles.CollectionsScreen}>
-            <SearchForm setSearchQuery={setSearchQuery} type="collections"/>
+            <View style={styles.SearchFormWrapper}>
+                <SearchForm setSearchQuery={setSearchQuery} type="collections"/>
+            </View>
 
             {collections ? (
                 <FlatList
@@ -50,8 +64,8 @@ return (
                             )}
                         </TouchableOpacity>
                     )}
-                    numColumns="2"
-                    style={{margin: 10, marginBottom: 100}}                
+                    numColumns={2}
+                    style={{margin: 10, marginBottom: 0}}                
                 />
             ) : (
                 <View style={styles.loadingContainer}>
@@ -63,24 +77,46 @@ return (
 }
 
 const styles = StyleSheet.create({
+    CollectionsScreen: {
+        backgroundColor: '#E6EBE0',
+        flex: 1,
+    },
+    SearchFormWrapper: {
+        backgroundColor: '#000',
+        paddingHorizontal: 10,
+        paddingBottom: 10,
+        borderBottomColor: '#F79824',
+        borderWidth: 2,
+        fontFamily: 'Quicksand_400Regular',
+    },
     loadingContainer: {
-        height: '100%',
+        flex: 1,
         justifyContent: 'center'
     },
     resultImage: {
         flex: 1,
-        height: 200
+        height: 200,
+        borderWidth: 2,
+        borderColor: '#F79824',
+        borderRadius: 20,
     },
     resultImageTouchable: {
         flex: 1,
-        margin: 10,
-        height: 200
+        margin: 5,
+        height: 200,
+    },
+    pageWrapper: {
+        flex: 1,
     },
     noImage: {
         backgroundColor: '#b2bec3',
         height: 200,
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: '#F79824',
+        borderRadius: 20,
+        margin: 5,
     }      
 });

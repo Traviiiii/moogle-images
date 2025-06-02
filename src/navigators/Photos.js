@@ -10,15 +10,9 @@ export default function PhotosNavigator() {
     const Stack = createStackNavigator();
 
     return (
-        <Stack.Navigator style={styles.PhotosNavigator}>
+        <Stack.Navigator>
             <Stack.Screen name="Photos" component={PhotosScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Photo Details" component={PhotoDetailsScreen} />
+            <Stack.Screen name="Photo Details" component={PhotoDetailsScreen}  options={{ headerShown: false }} />
         </Stack.Navigator>
     );
 }
-
-const styles = StyleSheet.create({
-    PhotosNavigator: {
-        /* Styles here */
-    },
-});

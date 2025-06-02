@@ -11,16 +11,10 @@ export default function CollectionsNavigator() {
     const Stack = createStackNavigator();
 
     return (
-        <Stack.Navigator style={styles.CollectionsScreen}>
+        <Stack.Navigator>
             <Stack.Screen name=" Collections" component={CollectionsScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="Collection Details" component={CollectionDetailsScreen} />
-            <Stack.Screen name="Photo Details" component={PhotoDetailsScreen} />
+            <Stack.Screen name="Collection Details" component={CollectionDetailsScreen} options={{ headerShown: false }}/>
+            <Stack.Screen name="Photo Details" component={PhotoDetailsScreen}  options={{ headerShown: false }}/>
         </Stack.Navigator>
     );
 }
-
-const styles = StyleSheet.create({
-    CollectionsNavigator: {
-        /* Styles here */
-    },
-});

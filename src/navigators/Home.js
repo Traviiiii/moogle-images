@@ -9,14 +9,8 @@ export default function HomeNavigator() {
     const Stack = createStackNavigator();
 
     return (
-        <Stack.Navigator style={styles.HomeNavigator}>
+        <Stack.Navigator>
             <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Photo Lens', headerShown: false }} />
         </Stack.Navigator>
     );
 }
-
-const styles = StyleSheet.create({
-    HomeNavigator: {
-        /* Styles here */
-    },
-});

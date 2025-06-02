@@ -21,8 +21,6 @@ export default function PhotoDetailsScreen({ route, navigation }) {
         getPhotoData();
     }, [photoId]);    
 
-    console.log("show details for photo: " + photoId);
-
     return (
         <View style={styles.PhotoDetailsScreen}>
             {photoData ? (
@@ -33,11 +31,17 @@ export default function PhotoDetailsScreen({ route, navigation }) {
                     />
                     <View style={styles.metaDataContainer}>
                         <Text style={styles.metaDataText}><Text style={{fontWeight: 'bold'}}>Photographer:</Text> {photoData.user.first_name} {photoData.user.last_name}</Text>
-                        <Text style={styles.metaDataText}><Text style={{fontWeight: 'bold'}}>Location:</Text> {photoData.location.title}</Text>
+                        <Text style={styles.metaDataText}><Text style={{fontWeight: 'bold'}}>Location:</Text> {photoData.location?.title || 'Unknown'}</Text>
                         <Text style={styles.metaDataText}><Text style={{fontWeight: 'bold'}}>Num of views:</Text> {photoData.views}</Text>
                         <Text style={styles.metaDataText}><Text style={{fontWeight: 'bold'}}>Num of downloads:</Text> {photoData.downloads}</Text>
-                        <Text style={[styles.metaDataText, {marginTop: 10}]}><Text style={{fontWeight: 'bold'}}>View Photo:</Text> <Text onPress={ ()=>{ Linking.openURL(photoData.links.html)}}>click here</Text></Text>
-                        <Text style={styles.metaDataText}><Text style={{fontWeight: 'bold'}}>Download Photo:</Text> <Text onPress={ ()=>{ Linking.openURL(photoData.links.download)}}>click here</Text></Text>
+                        <Text style={[styles.metaDataText, {marginTop: 10}]}>
+                            <Text style={{fontWeight: 'bold'}}>View Photo: </Text>
+                            <Text style={styles.linkText} onPress={() => { Linking.openURL(photoData.links.html) }}>click here</Text>
+                        </Text>
+                        <Text style={styles.metaDataText}>
+                            <Text style={{fontWeight: 'bold'}}>Download Photo: </Text>
+                            <Text style={styles.linkText} onPress={() => { Linking.openURL(photoData.links.download) }}>click here</Text>
+                        </Text>
                     </View>
                 </View>
             ) : (
@@ -45,28 +49,39 @@ export default function PhotoDetailsScreen({ route, navigation }) {
                     <ActivityIndicator size="large" color="#000"/>
                 </View>
             )}
-
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     PhotoDetailsScreen: {
+        backgroundColor: '#E6EBE0',
         flex: 1
     },
     loadingContainer: {
-        height: '100%',
-        justifyContent: 'center'
+        flex: 1,
+        justifyContent: 'center',
     },   
+    detailsContainer: {
+        flex: 1,
+    },
     photoImage: {
         width: '100%',
         height: 300,
-        resizeMode: 'cover'
+        resizeMode: 'cover',
+        borderTopWidth: 2,
+        borderBottomWidth: 2,
+        borderColor: '#F79824',
     }, 
     metaDataContainer: {
         margin: 20
     },
     metaDataText: {
-        fontSize: 17
-    }                    
+        fontSize: 17,
+        marginVertical: 4,
+    },
+    linkText: {
+        color: '#F79824',
+        textDecorationLine: 'underline',
+    }
 });

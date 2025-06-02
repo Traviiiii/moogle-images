@@ -6,6 +6,8 @@ export default function CollectionDetailsScreen({ route, navigation }) {
     const [collectionData, setCollectionData] = useState();
     const { collectionId } = route.params;
 
+    // Calls All images in collection with the provided ID
+
     const getCollectionData = () => {
         fetch('https://api.unsplash.com/collections/'+collectionId+'?client_id='+global.unsplashAccessKey)
         .then((response) => response.json())
@@ -16,10 +18,13 @@ export default function CollectionDetailsScreen({ route, navigation }) {
             console.error(error);
         });
     }
-    
+
+
     useEffect(() => {
         getCollectionData();
     }, [collectionId]);
+
+    // Returns the screen view with all images 
 
     return (
         <View style={styles.collectionDetailsScreen}>
@@ -27,34 +32,31 @@ export default function CollectionDetailsScreen({ route, navigation }) {
                 <View style={styles.detailsContainer}>
                     <Text style={styles.title}>{collectionData.title}</Text>
                     {collectionData.preview_photos ? (
-                    <View>
-                        <FlatList 
-                            data={ collectionData.preview_photos }
-                            renderItem={({item}) => (
-                                <TouchableOpacity
-                                    style={styles.resultImageTouchable}
-                                    onPress={() => {
-                                        navigation.navigate('Photo Details', {
-                                            photoId: item.id,
-                                        });
-                                    }}
-                                >
-                                    <Image
-                                        style={styles.resultImage}
-                                        source={{uri: item.urls.regular}}
-                                    />
-                                </TouchableOpacity>
-                            )}
-                            numColumns="2"
-                            style={{margin: 10, marginBottom: 100}}
-                        />
-                    </View>
-                ) : (
-                    <View>
-                        <Text style={styles.noPhotos}>Collection has no photos!</Text>
-                    </View>
-                )}
-
+                    <FlatList 
+                        data={ collectionData.preview_photos }
+                        renderItem={({item}) => (
+                            <TouchableOpacity
+                                style={styles.resultImageTouchable}
+                                onPress={() => {
+                                    navigation.navigate('Photo Details', {
+                                        photoId: item.id,
+                                    });
+                                }}
+                            >
+                                <Image
+                                    style={styles.resultImage}
+                                    source={{uri: item.urls.regular}}
+                                />
+                            </TouchableOpacity>
+                        )}
+                        numColumns={2}
+                        style={{margin: 10, marginBottom: 10}}
+                    />
+                    ) : (
+                        <View style={styles.noPhotos}>
+                            <Text style={styles.noPhotosText}>Collection has no photos!</Text>
+                        </View>
+                    )}
                 </View>
             ) : (
                 <View style={styles.loadingContainer}>
@@ -66,24 +68,42 @@ export default function CollectionDetailsScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+    collectionDetailsScreen: {
+        backgroundColor: '#E6EBE0',
+        flex: 1,
+    },
     loadingContainer: {
-        height: '100%',
-        justifyContent: 'center'
+        flex: 1,
+        justifyContent: 'center',
+    },
+    detailsContainer: {
+        flex: 1,
     },
     noPhotos: {
         backgroundColor: '#000',
-        color: '#FFF',
+        borderWidth: 2,
+        borderColor: '#F79824',
+        borderRadius: 20,
         margin: 10,
-        padding: 10
+        padding: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noPhotosText: {
+        color: '#FFF',
+        fontSize: 16,
     },
     resultImage: {
         flex: 1,
-        height: 200
+        height: 200,
+        borderWidth: 2,
+        borderColor: '#F79824',
+        borderRadius: 20,
     },
     resultImageTouchable: {
         flex: 1,
-        margin: 10,
-        height: 200
+        margin: 5,
+        height: 200,
     },
     title: {
         fontSize: 24,
@@ -91,5 +111,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 20,
         marginBottom: 10,
+        fontFamily: 'Quicksand_700Bold',
     }  
 });
